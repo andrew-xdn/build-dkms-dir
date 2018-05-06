@@ -1,0 +1,19 @@
+To install this DKMS package:
+    1. Install the DKMS framework ("sudo apt install dkms" on deb-based system, consult your distribution manual for more information).
+    2. Install kernel headers ("sudo apt install kernel-headers" on deb-based system, consult your distribution manual for more information).
+    3. Put this DKMS package into the DKMS framework's source directory (usually "/usr/src/", consult your distribution manual for more information).
+    4. Add, build and install the package ("sudo dkms install sbs-battery/1.0").
+    5. Check the DKMS framework status on the package ("dkms status sbs-battery/1.0").
+    6. Check information about installed module ("modinfo sbs-battery").
+    7. Assign the module to your Smart Battery System device on the I2C bus (usually address 0x0B, consult device's chip manual for more information) ("sudo sh -c "echo sbs-battery 0x0b > /sys/class/i2c-adapter/i2c-<n>/new_device""), where <n> - your I2C bus ID.
+    8. Check your kernel log for errors (dmesg | grep sbs-battery).
+    9. Test your device with any software that supports power supply devices or just use sysfs.
+    HINT: You can load kernel module using Linux Device Tree. Consult sbs_sbs-battery.txt for bindings.
+
+To remove this DKMS package:
+    1. Remove your Smart Battery System device from the I2C bus (usually address 0x0B, consult device's chip manual for more information) ("sudo sh -c "echo 0x0b > /sys/class/i2c-adapter/i2c-<n>/delete_device""), where <n> - your I2C bus ID.
+    2. Unload module ("sudo rmmod sbs-battery").
+    2. Check if module was successfuly unloaded ("lsmod | grep sbs-battery").
+    4. Remove the package and all installed files from the DKMS framework ("sudo dkms remove sbs-battery/1.0 --all"). 
+    5. Remove the DKMS package from the DKMS framework's source directory (usually "/usr/src/sbs-battery-1.0",
+        consult your distribution manual for more information).

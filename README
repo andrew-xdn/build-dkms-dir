@@ -1,0 +1,54 @@
+Script collects sources from the web and generates a DKMS package directory. It may be useful if you need to add an existing linux kernel module to a system where this module wasn't included and doesn't supported as a package. In case you need to use a patched kernel module it will be also helpful.
+
+To generate a DKMS package directory:
+1. Change your current directory to a project directory.
+2. Call a build-dkms-dir.sh script with or without arguments:
+    Use --pack (-p) argument to pack the output directory into gzipped tarball.
+    Use --checksum (-s) argument to calculate and save checksum (MD5 at the current version) of your output tarball.
+    Use --clean (-c) argument to clean previous script autput automatically.
+3. If the project has more the one website for module sources you will be asked to select the one you prefer more.
+4. Check the project directory to get your DKMS package directory, tarball (if you requested one) and checksum file (if the option selected).
+
+Usage: build-dkms-dir.sh [--pack | -p] [--clean | -c] [--help | -h] [--version | -V]
+    [--pack | -p] - pack an output directory to a gzipped tarball;
+    [--checksum | -s] - calculate tarball's checksum;
+    [--clean | -c] - clean all previous script output, if exists (DKMS package directory, tarball and checksum);
+    [--help | -h] - print usage information (this text);
+    [--version | -V] - print script version.
+
+Project directory contents:
+1. dkms.conf - a DKMS package configuration file.
+    Example:
+        PACKAGE_NAME=<your_module_name>
+        BUILT_MODULE_NAME[0]=<package_name_0> or "$PACKAGE_NAME"
+        DEST_MODULE_LOCATION[0]=<module_location_0>
+    WARNING: Make sure BUILT_MODULE_NAME and DEST_MODULE_LOCATION arrays have the same order if your package have more than one module.
+        Incorrect array order causes script malfanction! The best choice to keep both arrays' elements in increasing order.
+    Hint: It's not obligatory to keep this file in the project directory. If script can't find this file it'll try to download it from the selected web source.
+    WARNING: Makefile will be downloaded from the website URL directory if selected kernel sorces root website! 
+2. Makefile - a DKMS package makefile.
+    WARRNING: Don't forget to update "obj-m" variable if you use a make file from one of the example projects!
+    HINT: It's not obligatory to keep this file in the project directory. If script can't find this file it'll try to download it from the selected web source.
+    WARNING: A DKMS package configuration file will be downloaded from the website URL directory if selected kernel sorces root website! 
+3*. SOURCES - this file contains website URLs where the rest of project's resorces located.
+    Place URL per line. Kernel sources root expected as default.
+    Example:
+        https://raw.githubusercontent.com/torvalds/linux/master
+    HINT: If you want to fetch files from the not kernel sorces root (NKSR), place an exclamatory symbol (!) at the start of your URL.
+    Example:
+        !https://raw.githubusercontent.com/someuser/someproject/master
+4*. INCLUDES - the file contains file names you want to include in the DKMS package directory.
+    Place a file name per line. As default all files treated as local.
+    Example:
+        README
+    HINT: If you want to get your include file from the website, place a colon symbol (:) before the file name. The remote included file also can be ether relative path or URL.
+    Example:
+        :README
+        :../somedir/README
+        :https://raw.githubusercontent.com/someuser/someproject/master/README
+    WARNING: All file names and relative paths will be downloaded from the website URL directory if selected kernel sorces root website! 
+5. You can present a local source file for one or more modules. Script won't load a new source file for this modules and won't delete them
+    during cleaning phase.
+6. Files from INCLUDE file. Script will stop execution if any file from INCLUDE isn't presented.
+* You can skip this files if your project don't need them.
+WARNING: All files have to be with Unix line ending except your environment says other! Incorrect line ending causes script malfanction!

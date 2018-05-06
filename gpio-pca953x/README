@@ -1,0 +1,20 @@
+To install this DKMS package:
+    1. Install the DKMS framework ("sudo apt install dkms" on deb-based system, consult your distribution manual for more information).
+    2. Install kernel headers ("sudo apt install kernel-headers" on deb-based system, consult your distribution manual for more information).
+    3. Put this DKMS package into the DKMS framework's source directory (usually "/usr/src/", consult your distribution manual for more information).
+    4. Add, build and install the package ("sudo dkms install gpio-pca953x/1.0").
+    5. Check the DKMS framework status on the package ("dkms status gpio-pca953x/1.0").
+    6. Check information about installed module ("modinfo gpio-pca953x").
+    7. Assign the module to your Smart Battery System device on the I2C bus (usually address 0x20, consult device's chip manual for more information) ("sudo sh -c "echo <ic_model> 0x20 > /sys/class/i2c-adapter/i2c-<n>/new_device""), where:
+            <ic_model> - supported IC model (see full list in the source file or in gpio-pca953x.txt) (not the kernel module name!);
+            <n> - your I2C bus ID.
+    8. Check your kernel log for errors (dmesg | grep gpio-pca953x).
+    9. Test your device with any software that works with gpio Linux interface devices or just use sysfs.
+    HINT: You can load kernel module using Linux Device Tree. Consult gpio-pca953x.txt for bindings.
+
+To remove this DKMS package:
+    1. Remove your Smart Battery System device from the I2C bus (usually address 0x20, consult device's chip manual for more information) ("sudo sh -c "echo 0x20 > /sys/class/i2c-adapter/i2c-<n>/delete_device""), where <n> - your I2C bus ID.
+    2. Unload module ("sudo rmmod gpio-pca953x").
+    2. Check if module was successfuly unloaded ("lsmod | grep gpio-pca953x").
+    4. Remove the package and all installed files from the DKMS framework ("sudo dkms remove gpio-pca953x/1.0 --all"). 
+    5. Remove the DKMS package from the DKMS framework's source directory (usually "/usr/src/gpio-pca953x-1.0", consult your distribution manual for more information).
